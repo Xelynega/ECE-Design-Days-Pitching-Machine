@@ -16,19 +16,59 @@ void setup()
   InitializeInterrupt();
   interrupts();
   Serial.begin(115200); //115200 baud, 8 data bits, 1 stop bit, no parity, XON/XOFF flow control
-  while (!Serial) {
-    ; // wait for serial port to connect. Needed for native USB port only
-  }
-  Serial.println("");
-  Serial.println("UW ECE Ideas Clinic Pitching Machine");
+ while (!Serial) {
+   ; // wait for serial port to connect. Needed for native USB port only
 }
+ Serial.println("");
+ Serial.println("UW ECE Ideas Clinic Pitching Machine");
+}
+float speed = 0;
+unsigned int cur1;
+unsigned int cur2;
+unsigned int counter = 0;
 
 void loop()
 {
+  float tempSpeed = 0;
+
+  
+  
+ 
+
+     
+    
+     Serial.println("Enter a speed");
+
+   while(Serial.peek() == -1){
+  ;
+  }
+   tempSpeed = Serial.parseFloat();
+  if (tempSpeed < 0){
+      Serial.print("Motor 1 Current: ");
+      Serial.println(md.getCurrent(MOTOR_1));
+      Serial.print("Motor 2 Current: ");
+      Serial.println(md.getCurrent(MOTOR_2));
+  }else{
+     speed = tempSpeed;
+     Serial.println(speed);
+      Serial.println("Activating now");
+  }
+  
   while (Serial.available() <= 0) {
-      md.setSpeed2(1.0, 1.0);
+      md.setSpeed2(speed, speed);
+      cur1 = md.getCurrent(MOTOR_1);
+      cur2 = md.getCurrent(MOTOR_2);
+      counter++;
+      if (counter == 20000){
+        Serial.print("Current 1: ");
+        Serial.println(cur1);
+        Serial.print("Current 2: ");
+        Serial.println(cur2);
+        counter = 0;
+      }
   }
   md.setSpeed2(0, 0);
+  
   return;
 }
 
